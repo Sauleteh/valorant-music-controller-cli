@@ -1,7 +1,7 @@
 # Valorant Music Controller (CLI)
 Automatically pause/play and control the volume of your music depending on the state of the game you are in on Valorant. It should work on all music platforms, including YouTube, Spotify (browser and app), etc.
 It currently supports four states on Valorant to determine the volume:
-1. Not in game
+1. Not in game (No active game, choosing agent, map is loading)
 2. In game - Preparing (Buy phase)
 3. In game - Playing (Alive, playing the round)
 4. In game - Dead (Dead, watching the round)
