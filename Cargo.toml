@@ -1,0 +1,11 @@
+[package]
+name = "valorant-music-controller"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ctrlc = "3.4.5"
+enigo = "0.2.1"
+notify = "6.1.1"
+regex = "1.10.6"
+windows-volume-control = "0.1.1"
