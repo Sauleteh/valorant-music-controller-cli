@@ -190,7 +190,7 @@ fn main() {
     })
     .expect("Error setting Ctrl-C handler");
 
-    // TODO: Avisar de que el programa se está ejecutando y que se puede cerrar con Ctrl+C, NO cerrar el programa mediante la X.
+    println!("The program is now running. You can close it with Ctrl+C (Recommended instead of closing the CMD).");
     watchFile().unwrap();
 }
 
@@ -199,7 +199,7 @@ fn main() {
  * - [ ] Implementar el sistema de volumen
  *     - [X] Suponemos que pausar y reanudar la música es sencillo: es una combinación de teclas (MediaPlayPause) y se hace al llegar/salir del volumen 0.
  *     - [X] Controlar el volumen se hará mediante el control de volumen del sistema
-*      - [X] Se le da a elegir al usuario cual es la aplicación la cual se le va a controlar el volumen
+ *     - [X] Se le da a elegir al usuario cual es la aplicación la cual se le va a controlar el volumen
  *     - [X] El volumen que se tenía antes del programa se recupera al cerrar el programa
  *     - [ ] Además, el volumen se hace de forma gradual, no instantánea
  * - [ ] Pasar la aplicación a EGUI
