@@ -5,7 +5,7 @@ mod session_container;
 use constants::*;
 use session_container::SessionContainer;
 use std::path::Path;
-use std::io::{stdin, stdout, BufRead, BufReader, Seek, Write};
+use std::io::{stdout, BufRead, BufReader, Seek, Write};
 use std::sync::atomic::{AtomicU8, Ordering};
 use std::thread::sleep;
 use std::time::Duration;
@@ -27,20 +27,24 @@ fn playOrPauseMedia() {
 
 fn updateVolume(prevState: u8) {
     let volume = VOLUMES[getState() as usize];
-    println!("Setting volume to: {}", volume);
+    let prevVolume = VOLUMES[prevState as usize];
+    println!("Setting volume from {} to {}", prevVolume, volume);
 
     unsafe {
         if let Some(ref mut session_container) = SESSION_CONTAINER {
             let selectedSession = session_container.controller.get_session_by_name(session_container.sessionName.clone());
-            selectedSession.unwrap().setVolume(volume);
-            // TODO: Implementar un sistema de volumen más avanzado
-        }
-    }
+            
+            // Si se pretende pasar de un estado con volumen 0 a un estado con volumen mayor, se reanuda la música.
+            if prevVolume == 0.0 && volume > 0.0 { playOrPauseMedia(); }
+            
+            for i in 1..11 {
+                selectedSession.unwrap().setVolume(prevVolume + (volume - prevVolume) * (i as f32) / 10.0);
+                sleep(Duration::from_millis(100));
+            }
 
-    // Si el volumen objetivo es 0 o se viene de un estado con volumen 0, se pausa o reanuda la música.
-    let prevVolume = VOLUMES[prevState as usize];
-    if (volume == 0.0 && prevVolume > 0.0) || (prevVolume == 0.0 && volume > 0.0) {
-        playOrPauseMedia();
+            // Si el volumen objetivo es 0 después de estar en un estado con volumen mayor que 0, se pausa la música.
+            if volume == 0.0 && prevVolume > 0.0 { playOrPauseMedia(); }
+        }
     }
 }
 
@@ -191,16 +195,40 @@ fn main() {
     .expect("Error setting Ctrl-C handler");
 
     println!("The program is now running. You can close it with Ctrl+C (Recommended instead of closing the CMD).");
+
+    updateVolume(States::NOT_IN_GAME); // Se establece el volumen inicial
     watchFile().unwrap();
+}
+
+#[allow(dead_code)]
+#[cfg(test)]
+fn simulateMatch() {
+    // Simulamos una partida de prueba: Entro en una partida, empiezo a jugar, muero, me reviven, empieza una nueva ronda y termina la partida por surrender.
+    let simulationStates = [
+        States::IN_GAME_PREPARING,
+        States::IN_GAME_PLAYING,
+        States::IN_GAME_DEAD,
+        States::IN_GAME_PLAYING,
+        States::IN_GAME_PREPARING,
+        States::NOT_IN_GAME
+    ];
+
+    for state in simulationStates.iter() {
+        let prevState = getState();
+        setState(*state);
+        updateVolume(prevState);
+        sleep(Duration::from_secs(1));
+    }
 }
 
 /* TODO list:
  * - [X] Al actualizar el estado, se actualiza también el volumen (Implementar updateVolume)
- * - [ ] Implementar el sistema de volumen
+ * - [X] Implementar el sistema de volumen
  *     - [X] Suponemos que pausar y reanudar la música es sencillo: es una combinación de teclas (MediaPlayPause) y se hace al llegar/salir del volumen 0.
  *     - [X] Controlar el volumen se hará mediante el control de volumen del sistema
  *     - [X] Se le da a elegir al usuario cual es la aplicación la cual se le va a controlar el volumen
  *     - [X] El volumen que se tenía antes del programa se recupera al cerrar el programa
- *     - [ ] Además, el volumen se hace de forma gradual, no instantánea
+ *     - [X] Además, el volumen se hace de forma gradual, no instantánea
+ * - [ ] Comprobar que funciona correctamente en una partida real
  * - [ ] Pasar la aplicación a EGUI
  */

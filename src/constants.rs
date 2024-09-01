@@ -16,7 +16,7 @@ impl States {
 }
 
 pub const VOLUMES: [f32; 4] = [
-    1.00, // NOT_IN_GAME
+    1.00, // NOT_IN_GAME (no puede ser 0)
     0.50, // IN_GAME_PREPARING
     0.00, // IN_GAME_PLAYING
     0.50  // IN_GAME_DEAD
