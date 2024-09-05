@@ -48,9 +48,9 @@ fn updateVolume(prevState: u8) {
     }
 }
 
-fn analyzeText(text: &str) -> u8 {
+fn analyzeText(line: &str) -> u8 {
     let re = Regex::new(r"^\[(?P<date>[^\]]+)\]\[(?P<code>[^\]]+)\](?P<name>[^\:]+):\s*(?P<text>.+)$").unwrap();
-    if let Some(captures) = re.captures(text) {
+    if let Some(captures) = re.captures(line) {
         // let date = &captures["date"];
         // let code = &captures["code"];
         let name = &captures["name"];
@@ -60,6 +60,8 @@ fn analyzeText(text: &str) -> u8 {
         // println!("Log code: {}", code);
         // println!("Log name: {}", name);
         // println!("Text: {}", text);
+
+        // println!("{}", line);
 
         if name == "LogShooterGameState" {
             if text.contains("Match Ended") {
@@ -79,18 +81,6 @@ fn analyzeText(text: &str) -> u8 {
             if text.contains("Reconcile called with state: TransitionToInGame and new state: InGame. Changing state") {
                 println!("Match started.");
                 return States::IN_GAME_PREPARING;
-            }
-        }
-        else if name == "LogSkeletalMesh" {
-            if text.contains("USkeletalMeshComponent::RecreateClothingActors") {
-                println!("Player respawned.");
-                return States::IN_GAME_PLAYING;
-            }
-        }
-        else if name == "LogAresMinimapComponent" {
-            if text.contains("Found Compute Position override") {
-                println!("Player died.");
-                return States::IN_GAME_DEAD;
             }
         }
     }
@@ -130,7 +120,7 @@ fn watchFile() -> Result<()> {
             }
         }
 
-        println!("Current state: {}", getState());
+        //println!("Current state: {}", getState());
         sleep(Duration::from_secs(1));
     }
 }
@@ -207,8 +197,6 @@ fn simulateMatch() {
     let simulationStates = [
         States::IN_GAME_PREPARING,
         States::IN_GAME_PLAYING,
-        States::IN_GAME_DEAD,
-        States::IN_GAME_PLAYING,
         States::IN_GAME_PREPARING,
         States::NOT_IN_GAME
     ];
@@ -229,6 +217,6 @@ fn simulateMatch() {
  *     - [X] Se le da a elegir al usuario cual es la aplicación la cual se le va a controlar el volumen
  *     - [X] El volumen que se tenía antes del programa se recupera al cerrar el programa
  *     - [X] Además, el volumen se hace de forma gradual, no instantánea
- * - [ ] Comprobar que funciona correctamente en una partida real
+ * - [X] Comprobar que funciona correctamente en una partida real
  * - [ ] Pasar la aplicación a EGUI
  */

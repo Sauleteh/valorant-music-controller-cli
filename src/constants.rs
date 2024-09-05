@@ -12,12 +12,12 @@ impl States {
     // y cuando un personaje pasa de muerto a vivo | [2024.08.31-19.11.00:337][867]LogSkeletalMesh: Warning: USkeletalMeshComponent::RecreateClothingActors : (CosmeticCharacterMesh3P) Smonk_PC_C_2147249944 |
     pub const IN_GAME_PLAYING: u8 = 2;
     // Cuando un personaje pasa de vivo a muerto | [2024.08.31-18.51.39:595][870]LogAresMinimapComponent: Warning: Found Compute Position override on: MinimapRangeIndicator. Setting Position source to custom. Please change this in the asset. |
-    pub const IN_GAME_DEAD: u8 = 3;
+    // pub const IN_GAME_DEAD: u8 = 3;
 }
 
-pub const VOLUMES: [f32; 4] = [
+pub const VOLUMES: [f32; 3] = [
     1.00, // NOT_IN_GAME (no puede ser 0)
     0.50, // IN_GAME_PREPARING
-    0.00, // IN_GAME_PLAYING
-    0.50  // IN_GAME_DEAD
+    0.00 // IN_GAME_PLAYING
+    // 0.25  // IN_GAME_DEAD
 ];
